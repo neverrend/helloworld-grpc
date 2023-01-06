@@ -1,14 +1,14 @@
 # gRPC-Web Hello World Guide
 
-This guide is intended to help you get started with gRPC-Web with a simple
-Hello World example. For more information about the gRPC-Web project as a
-whole, please visit the [main repo](https://github.com/grpc/grpc-web).
-
-All the code for this example can be found in this current directory.
+## Run with Dockerfile
 
 ```sh
-$ cd net/grpc/gateway/examples/helloworld
+$ docker build . -t helloworld
+$ docker run -it --rm --entrypoint bash -p 8081:8081 -p 8080:8080 helloworld:latest
+\# bash startup.sh 
 ```
+
+Connect to localhost:8081 from any browser.
 
 ## Define the Service
 
