@@ -1,7 +1,7 @@
-#!/usr/bin/env zsh
+#!/usr/bin/env bash
  
 function check_dependencies(){
-    DEPS=("protoc" "protoc-gen-grpc-web" "npm" "npx" "docker" "python3" "node")
+    DEPS=("protoc" "protoc-gen-grpc-web" "npm" "npx" "python3" "node")
     echo "[*] Checking dependencies...";
  
     for dep in ${DEPS[@]}; do 
@@ -12,7 +12,19 @@ function check_dependencies(){
         fi
     done
 } 
- 
+
+function install_envoy(){
+    echo "[*] Installing envoy"
+
+    curl -sL 'https://deb.dl.getenvoy.io/public/gpg.8115BA8E629CC074.key' | gpg --dearmor -o /usr/share/keyrings/getenvoy-keyring.gpg
+    
+    echo a077cb587a1b622e03aa4bf2f3689de14658a9497a9af2c427bba5f4cc3c4723 /usr/share/keyrings/getenvoy-keyring.gpg | sha256sum --check \
+    
+    echo "deb [arch=amd64 signed-by=/usr/share/keyrings/getenvoy-keyring.gpg] https://deb.dl.getenvoy.io/public/deb/debian $(lsb_release -cs) main" | tee /etc/apt/sources.list.d/getenvoy.list \
+    
+    apt-get update && apt-get install -y getenvoy-envoy
+}
+
 function compile_protodef(){
     PROTODEF=helloworld.proto
     COMPILED_PROTO=helloworld_pb.js
@@ -44,7 +56,8 @@ function run(){
     BG_PID1=$!
  
     # echo "[*] Running Envoy proxy..."
-    docker run -v "$(pwd)"/envoy.yaml:/etc/envoy/envoy.yaml:ro -p 8080:8080 -p 9901:9901 envoyproxy/envoy:v1.22.0 & 
+    # docker run -v "$(pwd)"/envoy.yaml:/etc/envoy/envoy.yaml:ro -p 8080:8080 -p 9901:9901 envoyproxy/envoy:v1.22.0 &
+    envoy -c envoy.yaml &
     BG_PID2=$!
  
     # echo "[*] Running Python web server..."
@@ -62,9 +75,9 @@ function run(){
  
 }
  
- 
 function main(){ 
     check_dependencies
+    install_envoy
     compile_protodef
     compile_js
     run 
