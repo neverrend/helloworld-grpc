@@ -25,7 +25,11 @@ service Greeter {
 
 message HelloRequest {
   string name = 1;
+  int32 num = 2;
+  bool boolean = 3; 
+  bytes byte = 4;
 }
+
 
 message RepeatHelloRequest {
   string name = 1;

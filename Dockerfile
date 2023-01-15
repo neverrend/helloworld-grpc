@@ -1,4 +1,4 @@
-# sudo docker run -it --privileged -v /var/run/docker.sock:/var/run/docker.sock --entrypoint bash -p 8081:8081 helloworld:latest
+# sudo docker run -it --rm  --entrypoint bash -p 8081:8081 -p 8080:8080 -p 9229:9229 helloworld:latest
 FROM debian:latest
 
 # Get some basic packages needed to do various things

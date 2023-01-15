@@ -14,15 +14,21 @@ function check_dependencies(){
 } 
 
 function install_envoy(){
-    echo "[*] Installing envoy"
+    
+    if ! command -v envoy &> /dev/null 
+    then
+        echo "[*] Installing envoy"
 
-    curl -sL 'https://deb.dl.getenvoy.io/public/gpg.8115BA8E629CC074.key' | gpg --dearmor -o /usr/share/keyrings/getenvoy-keyring.gpg
-    
-    echo a077cb587a1b622e03aa4bf2f3689de14658a9497a9af2c427bba5f4cc3c4723 /usr/share/keyrings/getenvoy-keyring.gpg | sha256sum --check \
-    
-    echo "deb [arch=amd64 signed-by=/usr/share/keyrings/getenvoy-keyring.gpg] https://deb.dl.getenvoy.io/public/deb/debian $(lsb_release -cs) main" | tee /etc/apt/sources.list.d/getenvoy.list \
-    
-    apt-get update && apt-get install -y getenvoy-envoy
+        curl -sL 'https://deb.dl.getenvoy.io/public/gpg.8115BA8E629CC074.key' | gpg --dearmor -o /usr/share/keyrings/getenvoy-keyring.gpg
+
+        echo a077cb587a1b622e03aa4bf2f3689de14658a9497a9af2c427bba5f4cc3c4723 /usr/share/keyrings/getenvoy-keyring.gpg | sha256sum --check 
+
+        echo "deb [arch=amd64 signed-by=/usr/share/keyrings/getenvoy-keyring.gpg] https://deb.dl.getenvoy.io/public/deb/debian $(lsb_release -cs) main" | tee /etc/apt/sources.list.d/getenvoy.list 
+
+        apt-get update
+        
+        apt-get install -y getenvoy-envoy
+    fi
 }
 
 function compile_protodef(){
@@ -52,7 +58,7 @@ function compile_js(){
  
 function run(){
     # echo "[*] Running Node server..."
-    node server.js &
+    node --inspect=0.0.0.0 server.js &
     BG_PID1=$!
  
     # echo "[*] Running Envoy proxy..."

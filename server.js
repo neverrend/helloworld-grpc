@@ -39,7 +39,7 @@ var helloworld = protoDescriptor.helloworld;
  * @param {function():?} callback
  */
 function doSayHello(call, callback) {
-  callback(null, {message: 'Hello! '+ call.request.name});
+  callback(null, {message: `String: ${call.request.name}\nInt32: ${call.request.num}\nBoolean: ${call.request.boolean}\nBytes: ${call.request.byte}`});
 }
 
 /**
